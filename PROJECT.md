@@ -429,11 +429,15 @@ test/xxx      → adding or fixing tests
 
 ### What already exists and works
 
-- [ ] (Nothing yet — the data layer/Firebase is done; this layer is next)
+- [x] Repo initialized with `package.json`, `tsconfig.json`, and Node `.gitignore`
+- [x] Dependencies installed (Express, firebase-admin, MCP SDK, ws, zod, dotenv)
+- [x] TypeScript configured (strict mode) running via `tsx`
+- [x] Base Express server with a working `GET /health` endpoint
+- [x] Project documentation in the repo (`PROJECT.md` + `docs/data-layer.md`)
 
 ### In progress right now
 
-- [ ] Initialize the repo, `package.json`, and `.gitignore`
+- [ ] `POST /data` endpoint to receive ESP32 readings
 
 ### Known technical debt
 
@@ -441,7 +445,7 @@ test/xxx      → adding or fixing tests
 
 ### Known bugs / current limitations
 
-- [ ] N/A (not started)
+- [ ] N/A (early stage)
 
 ---
 
