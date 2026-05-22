@@ -11,7 +11,9 @@ admin.initializeApp({
     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
     // The private key has escaped newlines (\n) in the .env file.
     // We convert them back into real line breaks here.
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    privateKey: process.env.FIREBASE_PRIVATE_KEY
+      ?.replace(/\\n/g, '\n')   // convert literal \n into real line breaks
+      .replace(/^"|"$/g, ''),    // strip surrounding quotes if present
   }),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 })
