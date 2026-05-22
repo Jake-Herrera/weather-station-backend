@@ -440,10 +440,12 @@ test/xxx      → adding or fixing tests
 - [x] `POST /data` endpoint: validates and persists readings to Firebase
 - [x] Validation extracted to a pure service (`validateReading`)
 - [x] Unit tests for validation logic (Vitest) — passing
+- [x] `GET /readings` endpoint: history filtered by time range (1h/6h/24h/7d/30d)
+- [x] Pure time-range service (`getStartTimestamp`, `isValidRange`)
 
 ### In progress right now
 
-- [ ] `GET /readings` endpoint (history with time filters)
+- [ ] Unit tests for the time-range logic
 
 ### Known technical debt
 
