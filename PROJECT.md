@@ -438,10 +438,12 @@ test/xxx      → adding or fixing tests
 - [x] Firebase Admin SDK connected (server-side credentials via `.env`)
 - [x] Reading validation with zod (`readingSchema` + inferred `Reading` type)
 - [x] `POST /data` endpoint: validates and persists readings to Firebase
+- [x] Validation extracted to a pure service (`validateReading`)
+- [x] Unit tests for validation logic (Vitest) — passing
 
 ### In progress right now
 
-- [ ] Unit tests for the validation logic (Vitest)
+- [ ] `GET /readings` endpoint (history with time filters)
 
 ### Known technical debt
 
