@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { readingSchema } from '@/types/reading.js';
+import { validateReading } from '@/services/validate-reading.js';
 import { saveReading } from '@/db/firebase.js';
 
 const router = Router();
@@ -7,13 +7,12 @@ const DEFAULT_DEVICE_ID = process.env.DEFAULT_DEVICE_ID || 'esp32-01';
 
 // POST /data — receives a reading from the ESP32, validates it, and stores it.
 router.post('/data', async (req, res) => {
-  // 1. Validate the incoming payload against the schema (the "gatekeeper").
-  const result = readingSchema.safeParse(req.body);
+  // 1. Validate using the pure service function.
+  const result = validateReading(req.body);
 
-  if (!result.success) {
-    // The payload is malformed — reject it with a clear error.
+  if (!result.valid) {
     return res.status(400).json({
-      error: { code: 'INVALID_PAYLOAD', message: 'Reading payload is invalid' },
+      error: { code: 'INVALID_PAYLOAD', message: result.error },
     });
   }
 
