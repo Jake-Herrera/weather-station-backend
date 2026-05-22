@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { readingSchema } from '../types/reading.js';
-import { saveReading } from '../db/firebase.js';
+import { readingSchema } from '@/types/reading.js';
+import { saveReading } from '@/db/firebase.js';
 
 const router = Router();
 const DEFAULT_DEVICE_ID = process.env.DEFAULT_DEVICE_ID || 'esp32-01';

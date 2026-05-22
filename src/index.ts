@@ -1,7 +1,7 @@
 import express from 'express';
 import 'dotenv/config';
-import './db/firebase.js';
-import dataRouter from './routes/data.js';
+import '@/db/firebase.js';
+import dataRouter from '@/routes/data.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
