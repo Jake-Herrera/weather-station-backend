@@ -12,7 +12,8 @@
 | **Name**            | `weather-station-backend` |
 | **Layer**           | ⚙️ Business Logic (API + MCP) |
 | **Current version** | `0.1.0` |
-| **Status**          | 🟡 In development |
+| **Status**          | 🟢 Live (MVP in production) |
+| **Production URL**  | `https://weather-station-backend-production.up.railway.app` |
 | **Type**            | REST API + MCP Server |
 | **Audience**        | The ESP32 sends data here; the dashboard and ChatGPT/Claude read from here |
 | **Owner**           | `Jake` — `jkherrera96@outlook.com` |
@@ -443,6 +444,8 @@ test/xxx      → adding or fixing tests
 - [x] `GET /readings` endpoint: history filtered by time range (1h/6h/24h/7d/30d)
 - [x] Pure time-range service (`getStartTimestamp`, `isValidRange`)
 - [x] Unit tests for the time-range logic (Vitest) — passing
+- [x] Deployed to Railway with a public URL (production)
+- [x] Full data flow verified in production (POST → Firebase → GET)
 
 ### In progress right now
 
