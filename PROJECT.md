@@ -442,10 +442,11 @@ test/xxx      → adding or fixing tests
 - [x] Unit tests for validation logic (Vitest) — passing
 - [x] `GET /readings` endpoint: history filtered by time range (1h/6h/24h/7d/30d)
 - [x] Pure time-range service (`getStartTimestamp`, `isValidRange`)
+- [x] Unit tests for the time-range logic (Vitest) — passing
 
 ### In progress right now
 
-- [ ] Unit tests for the time-range logic
+- [ ] MCP server (expose data to ChatGPT/Claude)
 
 ### Known technical debt
 
