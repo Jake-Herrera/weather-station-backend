@@ -24,3 +24,23 @@ export const db = admin.database()
 export async function saveReading(deviceId: string, reading: Reading): Promise<void> {
   await db.ref(`readings/${deviceId}`).push(reading)
 }
+
+// Fetch readings for a device since a given start timestamp.
+// Uses orderByChild('ts') + startAt() to filter by time range on the server side.
+export async function getReadings(deviceId: string, startTs: number): Promise<Reading[]> {
+  const snapshot = await db
+    .ref(`readings/${deviceId}`)
+    .orderByChild('ts')
+    .startAt(startTs)
+    .once('value');
+
+  const value = snapshot.val();
+
+  // Firebase returns an object keyed by auto-id (or null if nothing matched).
+  // Convert it into a plain array of readings.
+  if (!value) {
+    return [];
+  }
+
+  return Object.values(value) as Reading[];
+}
