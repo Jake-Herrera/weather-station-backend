@@ -434,10 +434,13 @@ test/xxx      → adding or fixing tests
 - [x] TypeScript configured (strict mode) running via `tsx`
 - [x] Base Express server with a working `GET /health` endpoint
 - [x] Project documentation in the repo (`PROJECT.md` + `docs/data-layer.md`)
+- [x] Firebase Admin SDK connected (server-side credentials via `.env`)
+- [x] Reading validation with zod (`readingSchema` + inferred `Reading` type)
+- [x] `POST /data` endpoint: validates and persists readings to Firebase
 
 ### In progress right now
 
-- [ ] `POST /data` endpoint to receive ESP32 readings
+- [ ] Unit tests for the validation logic (Vitest)
 
 ### Known technical debt
 
