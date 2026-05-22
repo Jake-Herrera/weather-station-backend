@@ -420,6 +420,7 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | WebSocket prepared but inactive at launch | Reserves a channel for future non-Firebase data (external APIs, etc.)|
 | 2026-05-20  | MCP via @modelcontextprotocol/sdk         | Cross-vendor standard; lets ChatGPT/Claude query the data directly   |
 | 2026-05-20  | pnpm over npm                             | Faster, disk-efficient, blocks arbitrary install scripts (security)  |
+| 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
 
 ---
 
