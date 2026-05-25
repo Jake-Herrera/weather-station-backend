@@ -13,7 +13,7 @@
 | **Name**            | `weather-station-db` |
 | **Layer**           | 🗄️ Data (Persistence) |
 | **Current version** | `0.1.0` |
-| **Status**          | 🟡 In development |
+| **Status**          | 🟢 Live (in production) |
 | **Type**            | Cloud database (NoSQL — JSON tree) |
 | **Audience**        | The backend (Express) writes; the dashboard and MCP server read |
 | **Owner**           | `Jake` — `jkherrera96@outlook.com` |
@@ -32,10 +32,10 @@
 
 ### Key objectives (what success looks like)
 
-- [ ] The Firebase project is created and the Realtime Database is active
-- [ ] A `readings/` node exists where readings are stored
-- [ ] The backend can write a test reading and it appears in the console
-- [ ] Security rules are configured (not open to the public)
+- [x] The Firebase project is created and the Realtime Database is active
+- [x] A `readings/` node exists where readings are stored
+- [x] The backend can write a test reading and it appears in the console
+- [x] Security rules are configured (not open to the public)
 
 ---
 
@@ -281,7 +281,7 @@ VITE_FIREBASE_APP_ID=
 
 ## 9. Current Status of This Layer
 
-**Last updated:** `2026-05-22`
+**Last updated:** `2026-05-25`
 
 ### What already exists and works
 
@@ -297,7 +297,7 @@ VITE_FIREBASE_APP_ID=
 
 ### In progress right now
 
-- [ ] Dashboard consuming readings + device metadata (frontend build ongoing)
+- [ ] (without items — check Pending)
 
 ### Pending
 

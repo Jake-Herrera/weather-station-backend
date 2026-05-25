@@ -205,11 +205,11 @@ type TimeRange = '1h' | '6h' | '24h' | '7d' | '30d'
 
 | Feature                          | Status         | Notes                                  |
 |----------------------------------|----------------|----------------------------------------|
-| Receive readings (`POST /data`)  | ⬜ Pending     | Validates + writes to Firebase         |
-| Payload validation               | ⬜ Pending     | Pure logic, unit-tested                |
-| History with time filter         | ⬜ Pending     | `GET /readings?range=24h`              |
-| MCP server (latest + history)    | ⬜ Pending     | For ChatGPT/Claude                     |
-| Unit tests (logic core)          | ⬜ Pending     | Vitest                                 |
+| Receive readings (`POST /data`)  | ✅ Done        | Validates + writes to Firebase         |
+| Payload validation               | ✅ Done        | Pure logic, unit-tested                |
+| History with time filter         | ✅ Done        | `GET /readings?range=24h`              |
+| MCP server (latest + history)    | ⬜ In progress | For ChatGPT/Claude                     |
+| Unit tests (logic core)          | ✅ Done        | Vitest (passing)                       |
 | WebSocket scaffold               | ⬜ Pending     | Prepared but inactive at launch        |
 
 ### ❌ Out of Scope (for now)
@@ -427,7 +427,7 @@ test/xxx      → adding or fixing tests
 
 ## 14. Current Project Status
 
-**Last updated:** `2026-05-20`
+**Last updated:** `2026-05-25`
 
 ### What already exists and works
 
