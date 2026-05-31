@@ -21,7 +21,7 @@
 
 ### Problem it solves
 
-> The ESP32 + BMP280 sensor produces readings continuously, but a microcontroller cannot
+> The ESP32 + BME280 sensor produces readings continuously, but a microcontroller cannot
 > safely write to a database, run business logic, or expose an AI-queryable interface on its
 > own. Something trusted in the cloud must receive those readings, validate them, persist
 > them, and make them queryable.
@@ -101,7 +101,7 @@
 
 ```
 ┌──────────────┐  HTTP POST  ┌──────────────────────────────────┐
-│ ESP32+BMP280 │ ──────────► │   Express Backend (Railway)       │
+│ ESP32+BME280 │ ──────────► │   Express Backend (Railway)       │
 └──────────────┘   /data     │                                   │
                              │  routes → services (pure logic)   │
 ┌──────────────┐  WS / REST  │            │                      │
@@ -188,6 +188,7 @@ type Reading = {
   temp_c: number        // temperature in °C
   pressure_hpa: number  // atmospheric pressure in hPa
   altitude_m: number    // altitude in meters (derived from pressure)
+  humidity_pct: number  // relative humidity in % (0–100)
 }
 
 // Stored in Firebase under: readings/<deviceId>/<autoId>
@@ -231,7 +232,7 @@ Base URL (prod):  https://<app>.up.railway.app
 
 INGEST
   POST   /data                 → receive a reading from the ESP32
-         body: { device, ts, temp_c, pressure_hpa, altitude_m }
+         body: { device, ts, temp_c, pressure_hpa, altitude_m, humidity_pct }
          → 201 { ok: true } | 400 { error }
 
 READ
@@ -422,12 +423,13 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | MCP via @modelcontextprotocol/sdk         | Cross-vendor standard; lets ChatGPT/Claude query the data directly   |
 | 2026-05-20  | pnpm over npm                             | Faster, disk-efficient, blocks arbitrary install scripts (security)  |
 | 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
+| 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; humidity is valuable context alongside temperature and pressure readings |
 
 ---
 
 ## 14. Current Project Status
 
-**Last updated:** `2026-05-25`
+**Last updated:** `2026-05-30`
 
 ### What already exists and works
 

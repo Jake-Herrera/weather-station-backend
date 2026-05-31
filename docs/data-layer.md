@@ -21,9 +21,9 @@
 
 ### Problem it solves
 
-> Readings from the BMP280 sensor (temperature, pressure, altitude) need a place to be
-> stored continuously and persistently, accessible from the cloud, so they can later be
-> visualized and queried.
+> Readings from the BME280 sensor (temperature, pressure, altitude, humidity) need a place
+> to be stored continuously and persistently, accessible from the cloud, so they can later
+> be visualized and queried.
 
 ### Solution
 
@@ -73,13 +73,15 @@
         "ts": 1731675600000,
         "temp_c": 22.31,
         "pressure_hpa": 1013.42,
-        "altitude_m": 138.7
+        "altitude_m": 138.7,
+        "humidity_pct": 72.4
       },
       "-NxAbc124...": {
         "ts": 1731675630000,
         "temp_c": 22.35,
         "pressure_hpa": 1013.40,
-        "altitude_m": 139.1
+        "altitude_m": 139.1,
+        "humidity_pct": 71.8
       }
     }
   },
@@ -126,6 +128,7 @@
 | `temp_c`       | number  | °C           | `22.31`         | Temperature                               |
 | `pressure_hpa` | number  | hPa          | `1013.42`       | Atmospheric pressure                      |
 | `altitude_m`   | number  | meters       | `138.7`         | Altitude derived from pressure            |
+| `humidity_pct` | number  | %            | `72.4`          | Relative humidity (0–100)                 |
 
 > **Key decision:** storing `ts` in milliseconds enables filtering by time range
 > (last 24 h, 7 days, etc.) using `orderByChild('ts')` + `startAt()` / `endAt()`.
@@ -276,12 +279,13 @@ VITE_FIREBASE_APP_ID=
 | 2026-05-21  | Added `.indexOn: ["ts"]` on `$device`     | Backend queries with `orderByChild('ts')`; index keeps it fast        |
 | 2026-05-22  | Added `devices/` metadata node            | Dashboard reads device name/location; injected manually for now       |
 | 2026-05-22  | Activated production rules (`.write:false`)| Dashboard now reads directly from Firebase; clients are read-only    |
+| 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; all new readings include humidity alongside temperature, pressure, and altitude |
 
 ---
 
 ## 9. Current Status of This Layer
 
-**Last updated:** `2026-05-25`
+**Last updated:** `2026-05-30`
 
 ### What already exists and works
 
