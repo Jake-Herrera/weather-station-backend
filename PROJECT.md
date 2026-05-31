@@ -149,6 +149,8 @@ weather-station-backend/
 │   ├── services/           # PURE business logic (the unit-tested core)
 │   │   ├── validate-reading.ts   # payload validation (zod)
 │   │   └── time-range.ts         # hours/days/weeks → timestamp math
+│   ├── config/
+│   │   └── dns.ts          # Windows-only: force IPv4 DNS before any module loads
 │   ├── db/
 │   │   └── firebase.ts     # firebase-admin init + write/read helpers
 │   ├── mcp/
@@ -424,6 +426,7 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | pnpm over npm                             | Faster, disk-efficient, blocks arbitrary install scripts (security)  |
 | 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
 | 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; humidity is valuable context alongside temperature and pressure readings |
+| 2026-05-31  | Force IPv4 DNS on Windows (`dns.setDefaultResultOrder('ipv4first')`) | TLS handshake to Google OAuth endpoints fails silently over IPv6 on Windows; error surfaces as `internal_failure: undefined` (misleading — not a credential problem). Isolated to `src/config/dns.ts`, guarded by `process.platform === 'win32'` — no-op on Linux/Railway. |
 
 ---
 
@@ -460,6 +463,20 @@ test/xxx      → adding or fixing tests
 ### Known bugs / current limitations
 
 - [ ] N/A (early stage)
+
+### Windows local dev: IPv6 DNS workaround
+
+- [x] **Implemented.** On Windows, Node sometimes prefers IPv6 for DNS resolution.
+  The Firebase Admin SDK's TLS handshake to Google OAuth endpoints fails silently
+  over IPv6, surfacing only as `app/invalid-credential: internal_failure: undefined`
+  — a misleading error that looks like a bad credential but is actually a
+  network/TLS issue (Railway/Linux works fine with the same credentials).
+- **Fix lives in:** `src/config/dns.ts` — calls
+  `dns.setDefaultResultOrder('ipv4first')` inside `if (process.platform === 'win32')`.
+  Imported as the very first line of `src/index.ts` so the preference is set before
+  any other module initializes.
+- **Impact outside Windows:** none — the platform guard makes it a no-op on
+  Linux, macOS, and Railway.
 
 ---
 
