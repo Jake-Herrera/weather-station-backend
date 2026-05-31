@@ -159,7 +159,7 @@ weather-station-backend/
 │   │   └── server.ts       # WebSocket server (prepared, inactive at launch)
 │   ├── types/
 │   │   └── reading.ts      # shared TypeScript types (Reading, TimeRange)
-│   └── index.ts            # App entry: wires routes + MCP + WS
+│   └── index.ts            # App entry: imports config/dns.ts first, then wires routes + MCP + WS
 │
 ├── tests/
 │   └── unit/
