@@ -8,6 +8,7 @@ describe('validateReading', () => {
       temp_c: 22.5,
       pressure_hpa: 1013.2,
       altitude_m: 138.7,
+      humidity_pct: 72.4,
     };
 
     const result = validateReading(input);
@@ -20,6 +21,7 @@ describe('validateReading', () => {
       ts: 1731675600000,
       pressure_hpa: 1013.2,
       altitude_m: 138.7,
+      humidity_pct: 72.4,
     };
 
     const result = validateReading(input);
@@ -33,6 +35,7 @@ describe('validateReading', () => {
       temp_c: 22.5,
       pressure_hpa: 1013.2,
       altitude_m: 138.7,
+      humidity_pct: 72.4,
     };
 
     const result = validateReading(input);
@@ -42,6 +45,20 @@ describe('validateReading', () => {
 
   it('rejects an empty object', () => {
     const result = validateReading({});
+
+    expect(result.valid).toBe(false);
+  });
+
+  it('rejects a reading with humidity_pct out of range', () => {
+    const input = {
+      ts: 1731675600000,
+      temp_c: 22.5,
+      pressure_hpa: 1013.2,
+      altitude_m: 138.7,
+      humidity_pct: 150,
+    };
+
+    const result = validateReading(input);
 
     expect(result.valid).toBe(false);
   });
