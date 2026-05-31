@@ -35,6 +35,19 @@ function altitudeForPressure(pressure: number): number {
   return +(base + delta + noise).toFixed(1);
 }
 
+// Humidity is inverse to temperature: peaks ~90% at the cool early-morning trough,
+// dips to ~50% at the warm midday peak. Uses the same daily sine wave as tempForTime
+// but negated, then mapped from the [-1,1] range into [50, 90].
+function humidityForTime(date: Date, index: number): number {
+  const hour = date.getHours() + date.getMinutes() / 60;
+  const dailyCycle = -Math.sin(((hour - 9) / 24) * 2 * Math.PI); // inverted vs temp
+  const midpoint = 70;    // average humidity %
+  const amplitude = 20;   // ±20% swing (50% min, 90% max)
+  const drift = Math.sin(index / 200) * 5; // slow day-to-day drift
+  const noise = (Math.random() - 0.5) * 2;
+  return +Math.min(100, Math.max(0, midpoint + dailyCycle * amplitude + drift + noise)).toFixed(1);
+}
+
 async function seed() {
   console.log(`Generating ${READINGS} readings over ${DAYS} days...`);
 
@@ -49,11 +62,13 @@ async function seed() {
     const date = new Date(ts);
     const pressure = pressureForTime(i);
 
+    const temp_c = tempForTime(date);
     const reading = {
       ts,
-      temp_c: tempForTime(date),
+      temp_c,
       pressure_hpa: pressure,
       altitude_m: altitudeForPressure(pressure),
+      humidity_pct: humidityForTime(date, i),
     };
 
     await ref.push(reading);
