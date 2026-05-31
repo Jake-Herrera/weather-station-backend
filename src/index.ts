@@ -1,3 +1,5 @@
+// Must be the first import: configures DNS preferences before anything makes network calls.
+import '@/config/dns.js';
 import express from 'express';
 import 'dotenv/config';
 import './db/firebase.js';
