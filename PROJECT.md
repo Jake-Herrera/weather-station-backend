@@ -167,7 +167,7 @@ weather-station-backend/
 │       └── time-range.test.ts
 ├── docs/
 │   └── data-layer.md       # ← Firebase layer PROJECT.md lives here
-├── .env.example            # Required env vars (no values)
+├── .env                    # Local secrets — NEVER commit (see section 9 for the template)
 ├── .gitignore              # MUST include .env and the service account key
 ├── tsconfig.json           # TypeScript config (strict mode)
 ├── PROJECT.md              # ← This file
@@ -186,7 +186,7 @@ weather-station-backend/
 ```typescript
 // A single sensor reading
 type Reading = {
-  ts: number            // Unix timestamp in milliseconds (used for time filtering)
+  ts?: number           // set server-side (Date.now()); ESP32 may omit it
   temp_c: number        // temperature in °C
   pressure_hpa: number  // atmospheric pressure in hPa
   altitude_m: number    // altitude in meters (derived from pressure)
@@ -235,6 +235,7 @@ Base URL (prod):  https://<app>.up.railway.app
 INGEST
   POST   /data                 → receive a reading from the ESP32
          body: { device, ts, temp_c, pressure_hpa, altitude_m, humidity_pct }
+         Note: ts in the body is ignored — the server overwrites it with Date.now()
          → 201 { ok: true } | 400 { error }
 
 READ
@@ -293,7 +294,7 @@ MCP
 ## 9. Environment Variables
 
 ```bash
-# .env.example — copy to .env and fill in the values
+# .env — create this file and fill in the values below
 
 # App
 NODE_ENV=development
@@ -325,8 +326,7 @@ git clone https://github.com/<user>/weather-station-backend.git && cd weather-st
 # 2. Install dependencies (pnpm — secure by default, blocks arbitrary install scripts)
 pnpm install
 
-# 3. Configure environment
-cp .env.example .env
+# 3. Configure environment — create .env using the template in section 9 of this file
 # → Fill in the Firebase values from your service account JSON
 
 # 4. Start dev server
@@ -427,12 +427,13 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
 | 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; humidity is valuable context alongside temperature and pressure readings |
 | 2026-05-31  | Force IPv4 DNS on Windows (`dns.setDefaultResultOrder('ipv4first')`) | TLS handshake to Google OAuth endpoints fails silently over IPv6 on Windows; error surfaces as `internal_failure: undefined` (misleading — not a credential problem). Isolated to `src/config/dns.ts`, guarded by `process.platform === 'win32'` — no-op on Linux/Railway. |
+| 2026-06-02  | Server overwrites `ts` with `Date.now()` on every `POST /data`; `ts` is optional in the schema | The ESP32 cannot reliably track wall-clock time (no RTC, no NTP guaranteed). Rather than adding NTP complexity to the firmware, the backend stamps each reading with the server's current millisecond timestamp. Making `ts` optional in the zod schema reflects this: the ESP32 may omit it entirely, but if sent it must still be a valid integer (no silent coercion). |
 
 ---
 
 ## 14. Current Project Status
 
-**Last updated:** `2026-05-30`
+**Last updated:** `2026-06-02`
 
 ### What already exists and works
 
