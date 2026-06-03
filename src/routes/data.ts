@@ -19,7 +19,10 @@ router.post('/data', async (req, res) => {
   // 2. Allow the device id to come from the body, fall back to the default.
   const deviceId = req.body.device ?? DEFAULT_DEVICE_ID;
 
-  // 3. Persist the validated reading.
+  // 3. Overwrite ts with server time (ms) so the ESP32 doesn't need to manage it.
+  result.data.ts = Date.now();
+
+  // 4. Persist the validated reading.
   try {
     await saveReading(deviceId, result.data);
     return res.status(201).json({ ok: true });
