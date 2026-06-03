@@ -78,7 +78,7 @@
 
 | Tool             | Purpose                          |
 |------------------|----------------------------------|
-| Railway          | Deployment (push from GitHub)    |
+| Railway          | Deployment (push from GitHub); `railway.json` limits deploys to code changes |
 | GitHub           | Source control                   |
 | GitHub Actions   | CI (lint + tests) — optional     |
 
@@ -170,6 +170,7 @@ weather-station-backend/
 ├── .env                    # Local secrets — NEVER commit (see section 9 for the template)
 ├── .gitignore              # MUST include .env and the service account key
 ├── tsconfig.json           # TypeScript config (strict mode)
+├── railway.json            # Railway config: watchPatterns limits deploys to code changes
 ├── PROJECT.md              # ← This file
 └── package.json
 ```
@@ -427,6 +428,7 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
 | 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; humidity is valuable context alongside temperature and pressure readings |
 | 2026-05-31  | Force IPv4 DNS on Windows (`dns.setDefaultResultOrder('ipv4first')`) | TLS handshake to Google OAuth endpoints fails silently over IPv6 on Windows; error surfaces as `internal_failure: undefined` (misleading — not a credential problem). Isolated to `src/config/dns.ts`, guarded by `process.platform === 'win32'` — no-op on Linux/Railway. |
+| 2026-06-02  | `railway.json` with `watchPatterns` to skip deploys on doc-only commits | Pushing `PROJECT.md` / `README.md` changes should not trigger a Railway deploy. `watchPatterns` limits redeploys to changes in `src/`, `package.json`, `pnpm-lock.yaml`, and `tsconfig.json`. |
 | 2026-06-02  | Server overwrites `ts` with `Date.now()` on every `POST /data`; `ts` is optional in the schema | The ESP32 cannot reliably track wall-clock time (no RTC, no NTP guaranteed). Rather than adding NTP complexity to the firmware, the backend stamps each reading with the server's current millisecond timestamp. Making `ts` optional in the zod schema reflects this: the ESP32 may omit it entirely, but if sent it must still be a valid integer (no silent coercion). |
 
 ---
