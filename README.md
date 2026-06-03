@@ -1,6 +1,8 @@
 # weather-station-backend
 
-Backend for an IoT weather station (ESP32 + BME280). Receives sensor readings, persists them to Firebase, and exposes them via REST and MCP.
+🔗 **Production:** https://weather-station-backend-production.up.railway.app
+
+Backend for an IoT weather station (ESP32 + BME280). Receives sensor readings, persists them to Firebase, and exposes them via REST.
 
 ## Stack
 
@@ -8,7 +10,7 @@ Backend for an IoT weather station (ESP32 + BME280). Receives sensor readings, p
 - **Framework:** Express 5
 - **Database:** Firebase Realtime Database (Admin SDK)
 - **Validation:** Zod
-- **AI interface:** MCP server (`@modelcontextprotocol/sdk`)
+- **AI interface:** MCP server (`@modelcontextprotocol/sdk`) _(Planned — not yet implemented)_
 - **Deployment:** Railway
 
 ## Quick start
@@ -27,7 +29,7 @@ pnpm dev
 | GET    | `/readings`        | History filtered by `?range=` (1h/6h/24h/7d/30d) |
 | GET    | `/readings/latest` | Most recent reading                  |
 | GET    | `/health`          | Liveness check                       |
-| ALL    | `/mcp`             | MCP server for ChatGPT / Claude      |
+| ALL    | `/mcp`             | MCP server for ChatGPT / Claude _(Planned — not yet implemented)_ |
 
 ### POST /data payload
 
@@ -52,3 +54,8 @@ pnpm test:run    # single run (CI)
 ## Docs
 
 See [`PROJECT.md`](./PROJECT.md) for full architecture, decisions, and conventions.
+
+## Related repos
+
+- [weather-station-dashboard](https://github.com/Jake-Herrera/weather-station-dashboard)
+- [weather-station-firmware](https://github.com/Jake-Herrera/weather-station-firmware)
