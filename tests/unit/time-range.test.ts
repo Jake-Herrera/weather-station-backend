@@ -15,6 +15,11 @@ describe('isValidRange', () => {
     expect(isValidRange('2h')).toBe(false);
     expect(isValidRange('')).toBe(false);
   });
+
+  it('rejects ranges with wrong casing', () => {
+    expect(isValidRange('1H')).toBe(false);
+    expect(isValidRange('7D')).toBe(false);
+  });
 });
 
 describe('getStartTimestamp', () => {
@@ -36,8 +41,17 @@ describe('getStartTimestamp', () => {
     expect(getStartTimestamp('7d', NOW)).toBe(NOW - sevenDays);
   });
 
+  it('subtracts 6 hours for the 6h range', () => {
+    const sixHours = 6 * 60 * 60 * 1000;
+    expect(getStartTimestamp('6h', NOW)).toBe(NOW - sixHours);
+  });
+
   it('subtracts 30 days for the 30d range', () => {
     const thirtyDays = 30 * 24 * 60 * 60 * 1000;
     expect(getStartTimestamp('30d', NOW)).toBe(NOW - thirtyDays);
+  });
+
+  it('returns a timestamp earlier than now', () => {
+    expect(getStartTimestamp('1h', NOW)).toBeLessThan(NOW);
   });
 });
