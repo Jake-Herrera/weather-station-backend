@@ -306,7 +306,7 @@ PORT=3000
 FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY=
-FIREBASE_DATABASE_URL=https://weather-station-db-default-rtdb.firebaseio.com
+FIREBASE_DATABASE_URL=https://weather-station-db-52500-default-rtdb
 
 # Default device (MVP has a single sensor)
 DEFAULT_DEVICE_ID=esp32-01
