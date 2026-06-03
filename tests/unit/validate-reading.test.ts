@@ -29,6 +29,19 @@ describe('validateReading', () => {
     expect(result.valid).toBe(false);
   });
 
+  it('accepts a valid reading without ts (server sets it)', () => {
+    const input = {
+      temp_c: 22.5,
+      pressure_hpa: 1013.2,
+      altitude_m: 138.7,
+      humidity_pct: 72.4,
+    };
+
+    const result = validateReading(input);
+
+    expect(result.valid).toBe(true);
+  });
+
   it('rejects a reading where ts is a string', () => {
     const input = {
       ts: '1731675600000',
