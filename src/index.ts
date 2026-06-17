@@ -5,6 +5,7 @@ import 'dotenv/config';
 import './db/firebase.js';
 import dataRouter from '@/routes/data.js';
 import readingsRouter from '@/routes/readings.js';
+import mcpRouter from '@/mcp/transport.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.get('/health', (req, res) => {
 // Mount routes
 app.use(dataRouter);
 app.use(readingsRouter);
+app.use(mcpRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
