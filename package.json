@@ -11,7 +11,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "seed": "tsx scripts/seed-data.ts"
+    "seed": "tsx scripts/seed-data.ts",
+    "docs:update": "claude -p \"Read .claude/prompts/update-docs.md and follow the rules to update README.md and PROJECT.md\" --allowedTools \"Read,Edit\" --permission-mode acceptEdits --output-format stream-json --verbose"
   },
   "keywords": [],
   "author": "",
