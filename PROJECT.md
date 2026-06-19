@@ -15,7 +15,7 @@
 | **Status**          | 🟢 Live (MVP in production) |
 | **Production URL**  | `https://weather-station-backend-production.up.railway.app` |
 | **Type**            | REST API + MCP Server |
-| **Audience**        | The ESP32 sends data here; the dashboard and Claude read from here |
+| **Audience**        | The ESP32 sends data here; the dashboard and AI assistants read from here |
 | **Owner**           | `Jake` — `jkherrera96@outlook.com` |
 | **Repository**      | `https://github.com/Jake-Herrera/weather-station-backend.git` |
 
@@ -31,8 +31,8 @@
 > A Node.js + Express backend that (1) receives sensor readings over HTTP, (2) validates and
 > writes them to Firebase Realtime Database using the Admin SDK, (3) serves historical
 > queries to the dashboard over REST, (4) pushes processed/complementary data over WebSocket,
-> and (5) exposes an MCP server so Claude can query the weather data in natural
-> language.
+> and (5) exposes an MCP server so AI assistants (Claude, ChatGPT, etc.) can query
+> the weather data in natural language.
 
 ### Key objectives (what success looks like)
 
@@ -87,7 +87,7 @@
 | Service                    | Purpose                  | Docs                              |
 |----------------------------|--------------------------|-----------------------------------|
 | Firebase Realtime Database | Data persistence         | `https://firebase.google.com/docs/database` |
-| Claude (via MCP)           | AI consumer of the data  | `https://modelcontextprotocol.io` |
+| AI assistants (via MCP)    | AI consumers of the data | `https://modelcontextprotocol.io` |
 
 > **Note:** This backend does NOT use a frontend framework, an ORM, PostgreSQL, Redis,
 > or an auth provider. Firebase is the database; the Admin SDK handles access. TypeScript
@@ -110,8 +110,9 @@
 └──────────────┘             │   ┌──────────────────────┐        │
                              │   │ Firebase Realtime DB │        │
 ┌──────────────┐   MCP       │   └──────────────────────┘        │
-│ Claude       │ ◄─────────► │   MCP server (/mcp)               │
-│              │             │                                   │
+│ AI Assistants│ ◄─────────► │   MCP server (/mcp)               │
+│(Claude,      │             │                                   │
+│ ChatGPT, …)  │             │                                   │
 └──────────────┘             └──────────────────────────────────┘
 ```
 
@@ -223,7 +224,7 @@ type TimeRange = '1h' | '6h' | '24h' | '7d' | '30d'
 | Receive readings (`POST /data`)  | ✅ Done        | Validates + writes to Firebase         |
 | Payload validation               | ✅ Done        | Pure logic, unit-tested                |
 | History with time filter         | ✅ Done        | `GET /readings?range=24h`              |
-| MCP server (4 tools)             | ✅ Done        | For Claude (Streamable HTTP)           |
+| MCP server (4 tools)             | ✅ Done        | For AI assistants (Streamable HTTP)    |
 | Unit tests (logic core)          | ✅ Done        | Vitest (passing)                       |
 | WebSocket scaffold               | ⬜ Pending     | Prepared but inactive at launch        |
 
@@ -436,7 +437,7 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | Firebase RTDB over PostgreSQL/Drizzle     | No DB server to manage; visual console; built-in real-time           |
 | 2026-05-20  | Pure services separated from routes       | Makes business logic unit-testable without hitting the network       |
 | 2026-05-20  | WebSocket prepared but inactive at launch | Reserves a channel for future non-Firebase data (external APIs, etc.)|
-| 2026-05-20  | MCP via @modelcontextprotocol/sdk         | Cross-vendor standard; lets Claude query the data directly (ChatGPT requires OAuth for remote MCP servers, not implemented) |
+| 2026-05-20  | MCP via @modelcontextprotocol/sdk         | Cross-vendor standard; lets any MCP-compatible AI assistant (Claude, ChatGPT, etc.) query the data directly |
 | 2026-05-20  | pnpm over npm                             | Faster, disk-efficient, blocks arbitrary install scripts (security)  |
 | 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
 | 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; humidity is valuable context alongside temperature and pressure readings |

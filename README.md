@@ -29,7 +29,7 @@ pnpm dev
 | GET    | `/readings`        | History filtered by `?range=` (1h/6h/24h/7d/30d) |
 | GET    | `/readings/latest` | Most recent reading                  |
 | GET    | `/health`          | Liveness check                       |
-| POST   | `/mcp`             | MCP server for Claude (Streamable HTTP) |
+| POST   | `/mcp`             | MCP server for AI assistants (Streamable HTTP) |
 
 ### POST /data payload
 
