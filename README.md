@@ -10,7 +10,7 @@ Backend for an IoT weather station (ESP32 + BME280). Receives sensor readings, p
 - **Framework:** Express 5
 - **Database:** Firebase Realtime Database (Admin SDK)
 - **Validation:** Zod
-- **AI interface:** MCP server (`@modelcontextprotocol/sdk`) _(Planned — not yet implemented)_
+- **AI interface:** MCP server (`@modelcontextprotocol/sdk`)
 - **Deployment:** Railway
 
 ## Quick start
@@ -29,7 +29,7 @@ pnpm dev
 | GET    | `/readings`        | History filtered by `?range=` (1h/6h/24h/7d/30d) |
 | GET    | `/readings/latest` | Most recent reading                  |
 | GET    | `/health`          | Liveness check                       |
-| ALL    | `/mcp`             | MCP server for ChatGPT / Claude _(Planned — not yet implemented)_ |
+| POST   | `/mcp`             | MCP server for AI assistants (Streamable HTTP) |
 
 ### POST /data payload
 
@@ -43,6 +43,15 @@ pnpm dev
 ```
 
 > `ts` is optional — the server stamps every reading with `Date.now()`. `device` defaults to `esp32-01`.
+
+### MCP tools
+
+| Tool                    | Description                                      |
+|-------------------------|--------------------------------------------------|
+| `get_latest_reading`    | Most recent reading for a device                 |
+| `get_readings_in_range` | Historical readings filtered by time range       |
+| `get_stats_for_range`   | Min/max/avg stats for a time range               |
+| `get_device_meta`       | Device metadata (id, location, sensor type)      |
 
 ## Tests
 

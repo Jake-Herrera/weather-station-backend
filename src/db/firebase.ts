@@ -2,6 +2,12 @@ import admin from 'firebase-admin'
 import 'dotenv/config'
 import type { Reading } from '../types/reading.js'
 
+export type DeviceMeta = {
+  name: string;
+  location: string;
+  elevation_m: number;
+}
+
 // Initialize the Firebase Admin SDK using credentials from environment variables.
 // The Admin SDK has server-side privileges, so it can write to the database
 // regardless of the security rules (those rules only restrict client access).
@@ -45,4 +51,45 @@ export async function getReadings(deviceId: string, startTs: number): Promise<Re
   }
 
   return Object.values(value) as Reading[];
+}
+
+// Fetch the single most recent reading for a device.
+export async function getLatestReading(deviceId: string): Promise<Reading | null> {
+  const snapshot = await db
+    .ref(`readings/${deviceId}`)
+    .orderByChild('ts')
+    .limitToLast(1)
+    .once('value');
+
+  const value = snapshot.val();
+  if (!value) return null;
+
+  return (Object.values(value) as Reading[])[0] ?? null;
+}
+
+// Fetch readings within a closed time range, capped at limit.
+export async function getReadingsInRange(
+  deviceId: string,
+  startTs: number,
+  endTs: number,
+  limit: number,
+): Promise<Reading[]> {
+  const snapshot = await db
+    .ref(`readings/${deviceId}`)
+    .orderByChild('ts')
+    .startAt(startTs)
+    .endAt(endTs)
+    .limitToLast(limit)
+    .once('value');
+
+  const value = snapshot.val();
+  if (!value) return [];
+
+  return (Object.values(value) as Reading[]).sort((a, b) => (a.ts ?? 0) - (b.ts ?? 0));
+}
+
+// Fetch device metadata from devices/{deviceId}.
+export async function getDeviceMeta(deviceId: string): Promise<DeviceMeta | null> {
+  const snapshot = await db.ref(`devices/${deviceId}`).once('value');
+  return snapshot.val() as DeviceMeta | null;
 }

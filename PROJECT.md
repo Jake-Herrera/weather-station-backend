@@ -15,7 +15,7 @@
 | **Status**          | 🟢 Live (MVP in production) |
 | **Production URL**  | `https://weather-station-backend-production.up.railway.app` |
 | **Type**            | REST API + MCP Server |
-| **Audience**        | The ESP32 sends data here; the dashboard and ChatGPT/Claude read from here |
+| **Audience**        | The ESP32 sends data here; the dashboard and AI assistants read from here |
 | **Owner**           | `Jake` — `jkherrera96@outlook.com` |
 | **Repository**      | `https://github.com/Jake-Herrera/weather-station-backend.git` |
 
@@ -31,15 +31,15 @@
 > A Node.js + Express backend that (1) receives sensor readings over HTTP, (2) validates and
 > writes them to Firebase Realtime Database using the Admin SDK, (3) serves historical
 > queries to the dashboard over REST, (4) pushes processed/complementary data over WebSocket,
-> and (5) exposes an MCP server so ChatGPT/Claude can query the weather data in natural
-> language.
+> and (5) exposes an MCP server so AI assistants (Claude, ChatGPT, etc.) can query
+> the weather data in natural language.
 
 ### Key objectives (what success looks like)
 
 - [ ] The backend receives a reading via `POST /data` and writes it to Firebase
 - [ ] Input validation rejects malformed payloads
 - [ ] `GET /readings` returns history filtered by time range (hours / days / weeks)
-- [ ] The MCP server exposes `get_latest_reading` and `get_history` tools
+- [x] The MCP server exposes `get_latest_reading`, `get_readings_in_range`, `get_stats_for_range`, and `get_device_meta` tools
 - [ ] Unit tests cover the pure logic (validation + time-range math)
 
 ---
@@ -54,25 +54,25 @@
 | Technology      | Version  | Purpose                                  |
 |-----------------|----------|------------------------------------------|
 | Node.js         | `22.x`   | Runtime                                  |
-| TypeScript      | `5.x`    | Type safety                              |
+| TypeScript      | `6.x`    | Type safety                              |
 | Express         | `5.x`    | HTTP framework (REST endpoints)          |
 | firebase-admin  | `13.x`   | Write/read Firebase RTDB (server-side)   |
 | @modelcontextprotocol/sdk | `latest` | Expose data as MCP tools for AI |
 | ws              | `8.x`    | WebSocket server (real-time push)        |
-| zod             | `3.x`    | Payload validation + inferred types      |
-| dotenv          | `16.x`   | Load environment variables               |
+| zod             | `4.x`    | Payload validation + inferred types      |
+| dotenv          | `17.x`   | Load environment variables               |
 
 ### Tooling
 
 | Technology      | Version  | Purpose                                  |
 |-----------------|----------|------------------------------------------|
 | tsx             | `4.x`    | Run TypeScript directly (no build step)  |
-| @types/node     | `22.x`   | Node type definitions                    |
+| @types/node     | `25.x`   | Node type definitions                    |
 | @types/express  | `5.x`    | Express type definitions                 |
 | @types/ws       | `8.x`    | WebSocket type definitions               |
-| Vitest          | `2.x`    | Unit testing                             |
+| Vitest          | `4.x`    | Unit testing                             |
 | Supertest       | `7.x`    | HTTP endpoint testing                    |
-| pnpm            | `9.x`    | Package manager (secure by default)      |
+| pnpm            | `10.x`   | Package manager (secure by default)      |
 
 ### Infrastructure & DevOps
 
@@ -87,7 +87,7 @@
 | Service                    | Purpose                  | Docs                              |
 |----------------------------|--------------------------|-----------------------------------|
 | Firebase Realtime Database | Data persistence         | `https://firebase.google.com/docs/database` |
-| OpenAI / Claude (via MCP)  | AI consumer of the data  | `https://modelcontextprotocol.io` |
+| AI assistants (via MCP)    | AI consumers of the data | `https://modelcontextprotocol.io` |
 
 > **Note:** This backend does NOT use a frontend framework, an ORM, PostgreSQL, Redis,
 > or an auth provider. Firebase is the database; the Admin SDK handles access. TypeScript
@@ -110,8 +110,9 @@
 └──────────────┘             │   ┌──────────────────────┐        │
                              │   │ Firebase Realtime DB │        │
 ┌──────────────┐   MCP       │   └──────────────────────┘        │
-│ ChatGPT /    │ ◄─────────► │   MCP server (/mcp)               │
-│ Claude       │             │                                   │
+│ AI Assistants│ ◄─────────► │   MCP server (/mcp)               │
+│(Claude,      │             │                                   │
+│ ChatGPT, …)  │             │                                   │
 └──────────────┘             └──────────────────────────────────┘
 ```
 
@@ -154,7 +155,13 @@ weather-station-backend/
 │   ├── db/
 │   │   └── firebase.ts     # firebase-admin init + write/read helpers
 │   ├── mcp/
-│   │   └── server.ts       # MCP tools: get_latest_reading, get_history
+│   │   ├── tools/
+│   │   │   ├── get-latest-reading.ts    # Tool: get_latest_reading
+│   │   │   ├── get-readings-in-range.ts # Tool: get_readings_in_range
+│   │   │   ├── get-stats-for-range.ts   # Tool: get_stats_for_range
+│   │   │   └── get-device-meta.ts       # Tool: get_device_meta
+│   │   ├── server.ts       # MCP server creation + tool registration
+│   │   └── transport.ts    # Streamable HTTP transport (Express router)
 │   ├── ws/
 │   │   └── server.ts       # WebSocket server (prepared, inactive at launch)
 │   ├── types/
@@ -164,7 +171,12 @@ weather-station-backend/
 ├── tests/
 │   └── unit/
 │       ├── validate-reading.test.ts
-│       └── time-range.test.ts
+│       ├── time-range.test.ts
+│       └── mcp/
+│           ├── get-latest-reading.test.ts
+│           ├── get-readings-in-range.test.ts
+│           ├── get-stats-for-range.test.ts
+│           └── get-device-meta.test.ts
 ├── docs/
 │   └── data-layer.md       # ← Firebase layer PROJECT.md lives here
 ├── .env                    # Local secrets — NEVER commit (see section 9 for the template)
@@ -212,7 +224,7 @@ type TimeRange = '1h' | '6h' | '24h' | '7d' | '30d'
 | Receive readings (`POST /data`)  | ✅ Done        | Validates + writes to Firebase         |
 | Payload validation               | ✅ Done        | Pure logic, unit-tested                |
 | History with time filter         | ✅ Done        | `GET /readings?range=24h`              |
-| MCP server (latest + history)    | ⬜ In progress | For ChatGPT/Claude                     |
+| MCP server (4 tools)             | ✅ Done        | For AI assistants (Streamable HTTP)    |
 | Unit tests (logic core)          | ✅ Done        | Vitest (passing)                       |
 | WebSocket scaffold               | ⬜ Pending     | Prepared but inactive at launch        |
 
@@ -250,8 +262,8 @@ HEALTH
   GET    /health               → 200 { status: "ok" }
 
 MCP
-  ALL    /mcp                  → MCP server endpoint (Streamable HTTP)
-         tools: get_latest_reading, get_history
+  POST   /mcp                  → MCP server endpoint (Streamable HTTP)
+         tools: get_latest_reading, get_readings_in_range, get_stats_for_range, get_device_meta
 ```
 
 ### API conventions
@@ -347,6 +359,8 @@ pnpm test
 | `pnpm test`         | Unit tests (Vitest, watch mode)          |
 | `pnpm test:run`     | Unit tests once (for CI / pre-commit)    |
 | `pnpm test:coverage`| Tests with coverage report               |
+| `pnpm seed`         | Seed Firebase with sample data           |
+| `pnpm docs:update`  | Update README.md and PROJECT.md via Claude|
 
 > **pnpm note:** the first time a dependency needs a post-install build script, pnpm will
 > block it for safety and show "ignored build scripts". Approve with `pnpm approve-builds`.
@@ -368,7 +382,7 @@ pnpm test
 | `validateReading()`         | Rejects bad payloads, accepts good ones (core safety)|
 | `getTimeRange()`            | hours/days/weeks → correct start timestamp (filters) |
 | Data transformations        | Any averaging/formatting before sending to dashboard |
-| MCP tool handlers           | Return the correct shape for `get_latest`/`get_history` |
+| MCP tool handlers           | Input schemas and handler shapes for all 4 tools |
 
 ### What NOT to test
 
@@ -423,7 +437,7 @@ test/xxx      → adding or fixing tests
 | 2026-05-20  | Firebase RTDB over PostgreSQL/Drizzle     | No DB server to manage; visual console; built-in real-time           |
 | 2026-05-20  | Pure services separated from routes       | Makes business logic unit-testable without hitting the network       |
 | 2026-05-20  | WebSocket prepared but inactive at launch | Reserves a channel for future non-Firebase data (external APIs, etc.)|
-| 2026-05-20  | MCP via @modelcontextprotocol/sdk         | Cross-vendor standard; lets ChatGPT/Claude query the data directly   |
+| 2026-05-20  | MCP via @modelcontextprotocol/sdk         | Cross-vendor standard; lets any MCP-compatible AI assistant (Claude, ChatGPT, etc.) query the data directly |
 | 2026-05-20  | pnpm over npm                             | Faster, disk-efficient, blocks arbitrary install scripts (security)  |
 | 2026-05-20  | `@/` path alias over relative imports     | Cleaner imports, easier refactors; resolved natively by tsx          |
 | 2026-05-30  | BMP280 → BME280: adds relative humidity as a fourth required field (humidity_pct, 0-100) | Sensor upgrade; humidity is valuable context alongside temperature and pressure readings |
@@ -435,7 +449,7 @@ test/xxx      → adding or fixing tests
 
 ## 14. Current Project Status
 
-**Last updated:** `2026-06-02`
+**Last updated:** `2026-06-17`
 
 ### What already exists and works
 
@@ -454,10 +468,13 @@ test/xxx      → adding or fixing tests
 - [x] Unit tests for the time-range logic (Vitest) — passing
 - [x] Deployed to Railway with a public URL (production)
 - [x] Full data flow verified in production (POST → Firebase → GET)
+- [x] MCP server with 4 tools (get_latest_reading, get_readings_in_range, get_stats_for_range, get_device_meta)
+- [x] Firebase read helpers for MCP module (latest reading, readings in range, stats, device meta)
+- [x] Unit tests for all MCP tool input schemas and handler shapes
 
 ### In progress right now
 
-- [ ] MCP server (expose data to ChatGPT/Claude)
+- None — MVP feature-complete
 
 ### Known technical debt
 
