@@ -205,10 +205,10 @@
 ```bash
 # Backend .env — downloaded from:
 # Firebase Console → Project settings → Service accounts → Generate new private key
-FIREBASE_PROJECT_ID=
-FIREBASE_CLIENT_EMAIL=
-FIREBASE_PRIVATE_KEY=
-FIREBASE_DATABASE_URL=https://weather-station-db-52500-default-rtdb.firebaseio.com/
+FIREBASE_PROJECT_ID= # project_id
+FIREBASE_CLIENT_EMAIL=  # client_email
+FIREBASE_PRIVATE_KEY=  #private_key
+FIREBASE_DATABASE_URL= https://weather-station-db-52500-default-rtdb.firebaseio.com/
 ```
 
 ### What the DASHBOARD needs (client)
@@ -216,11 +216,11 @@ FIREBASE_DATABASE_URL=https://weather-station-db-52500-default-rtdb.firebaseio.c
 ```bash
 # Frontend .env — from:
 # Firebase Console → Project settings → Your apps → Web config
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_API_KEY= # apiKey
+VITE_FIREBASE_AUTH_DOMAIN= # authDomain
 VITE_FIREBASE_DATABASE_URL=https://weather-station-db-52500-default-rtdb.firebaseio.com/
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_PROJECT_ID= # projectId
+VITE_FIREBASE_APP_ID= # appId
 ```
 
 ---
