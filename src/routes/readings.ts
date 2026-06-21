@@ -1,9 +1,26 @@
 import { Router } from 'express';
 import { getStartTimestamp, isValidRange } from '@/services/time-range.js';
-import { getReadings } from '@/db/firebase.js';
+import { getReadings, getLatestReading } from '@/db/firebase.js';
 
 const router = Router();
 const DEFAULT_DEVICE_ID = process.env.DEFAULT_DEVICE_ID || 'esp32-01';
+
+// GET /readings/latest — returns the most recent reading for the device.
+router.get('/readings/latest', async (req, res) => {
+  try {
+    const data = await getLatestReading(DEFAULT_DEVICE_ID);
+    if (!data) {
+      return res.status(404).json({
+        error: { code: 'NO_READINGS', message: 'No readings found for this device' },
+      });
+    }
+    return res.status(200).json({ data });
+  } catch {
+    return res.status(500).json({
+      error: { code: 'FETCH_FAILED', message: 'Could not fetch latest reading' },
+    });
+  }
+});
 
 // GET /readings?range=24h — returns history filtered by time range.
 router.get('/readings', async (req, res) => {
